@@ -14,14 +14,14 @@ module Sequel
             define_method(money_attr_name) do
               amount = self[subunit_column]
               currency = self[currency_column]
-              ::Money.new(amount, currency)
+              ::Money.new(amount || 0, currency)
             end
           end
         end
 
         model.instance_eval do
           define_method("#{money_attr_name}=") do |value|
-            value = ::Money.new(value, self.send(:[], currency_column)) unless value.is_a?(::Money)
+            value = ::Money.new(value || 0, self.send(:[], currency_column)) unless value.is_a?(::Money)
             self[subunit_column] = value.cents
             self[currency_column] = value.currency.iso_code
           end
